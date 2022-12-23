@@ -6,7 +6,8 @@
 package Controller;
 
 import Connection.Database;
-import java.awt.Component;
+import Crypto.Encryption;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,10 +23,10 @@ public class Post {
 
     public Post() {    }
 
-    public static void importFile() {
+    public static void importFile() throws Exception {
         path = Path.of(Objects.requireNonNull(file_path()));
-        if (Files.exists(path, new LinkOption[0])) {
-            Database.insertFile(String.valueOf(path.getFileName()), file_category(), file_size(), path, file_custom());
+        if (Files.exists(path)) {
+            Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(), file_size(), path, file_custom());
         } else {
             System.out.println("nah");
         }
