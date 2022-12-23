@@ -1,4 +1,4 @@
-package main.java.FileReporsitory;
+package FileReporsitory;
 
 public class FileRepository {
 }

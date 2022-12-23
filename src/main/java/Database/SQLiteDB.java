@@ -1,4 +1,4 @@
-package main.java.Database;
+package Database;
 
 public class SQLiteDB {
     private static SQLiteDB instance = null;
