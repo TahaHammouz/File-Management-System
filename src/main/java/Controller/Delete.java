@@ -1,4 +1,4 @@
-package main.java.Controller;
+package Controller;
 
 public class Delete {
 }

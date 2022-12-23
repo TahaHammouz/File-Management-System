@@ -1,4 +1,4 @@
-package main.java.Crypto;
+package Crypto;
 
 public class Decryption {
 }
