@@ -8,12 +8,13 @@ public class Get {
 
     public static void exportFile() throws Exception {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter File Name (with extension) to Export: ");
+
+        System.out.println("\nEnter File Name (with extension) to Export:");
         String fileName = scanner.nextLine();
 
-        retrieveFile(Encryption.encrypt(fileName));
+        System.out.println("Enter File Custom to Export:");
+        String custom = scanner.nextLine();
 
-        //System.out.println("Done, the file is exported.");
-        //System.out.println("The file is not exist.");
+        retrieveFile(Encryption.encrypt(fileName), custom);
     }
 }

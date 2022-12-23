@@ -35,19 +35,20 @@ public class Database {
             preparedStatement.setString(5, custom);
             preparedStatement.executeUpdate();
 
-            System.out.println("row inserted");
+            System.out.println("Row Inserted");
         } catch (SQLException var7) {
             System.out.println(var7.getMessage());
         }
     }
 
-    public static void retrieveFile(String fileName) {
+    public static void retrieveFile(String fileName, String custom) {
 
-        final String query = "SELECT path FROM Files WHERE name = ?";
+        final String query = "SELECT path FROM Files WHERE name = ? AND custom = ?";
 
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(query);
             preparedStatement.setString(1, fileName);
+            preparedStatement.setString(2, custom);
 
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
@@ -67,7 +68,7 @@ public class Database {
                 Files.write(targetPath, lines);
 
                 if (Files.exists(targetPath)) {
-                    System.out.println("Exported File Successfully: " + targetPath);
+                    System.out.println("\nExported File Successfully: " + targetPath);
                 }
             }
 
