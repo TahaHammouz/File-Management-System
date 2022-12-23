@@ -23,7 +23,7 @@ public class Post {
     public Post() {    }
 
     public static void importFile() {
-        path = Path.of(Objects.requireNonNull(file_path()));
+        path = Path.of(Objets.requireNonNull(file_path()));
         if (Files.exists(path, new LinkOption[0])) {
             Database.insertFile(String.valueOf(path.getFileName()), file_category(), file_size(), path, file_custom());
         } else {
