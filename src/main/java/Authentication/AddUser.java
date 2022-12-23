@@ -5,8 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import static Constants.Constants.*;
+
 public class AddUser {
-    private static final String URL = "jdbc:sqlite:FilesRepository.db";
     public static void insertUser(String userName, String passWord, String role) {
         final String SQL = "INSERT INTO users VALUES(?,?,?)";
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(SQL);) {
@@ -20,6 +21,6 @@ public class AddUser {
         }
     }
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL);
+        return DriverManager.getConnection(SQLiteURL);
     }
 }
