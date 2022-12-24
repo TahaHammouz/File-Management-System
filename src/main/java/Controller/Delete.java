@@ -1,4 +1,7 @@
 package Controller;
+import FileReporsitory.FileRepository;
+
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -15,6 +18,7 @@ public class Delete {
             preparedStatement.executeUpdate();
             System.out.println("file is deleted");
 
+            FileRepository.removeFile(new File(name));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
