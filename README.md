@@ -18,9 +18,9 @@ With this File-Management, It is easy to give permissions to users, and your fil
 - ```java executeUpdate``` method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL statement.
 - ```java Path``` class represents a file or directory path. It is used to manipulate file and directory paths and perform operations on what they represent.
 - ```java Files``` class provides various static methods for performing operations on files and directories.
-* ```java MessageDigest``` class is used to generate cryptographic hash values for data.
-* ```java digest``` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data.
-* ```java Cipher``` class is used to perform encryption and decryption using various cryptographic algorithms.
-* ```java SecretKeySpec``` class is used to represent a secret key for a cryptographic algorithm. 
-* ```java doFinal``` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation.
-* ```java decode``` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
+- ```java MessageDigest``` class is used to generate cryptographic hash values for data.
+- ```java digest``` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data.
+- ```java Cipher``` class is used to perform encryption and decryption using various cryptographic algorithms.
+- ```java SecretKeySpec``` class is used to represent a secret key for a cryptographic algorithm. 
+- ```java doFinal``` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation.
+- ```ruby decode``` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
