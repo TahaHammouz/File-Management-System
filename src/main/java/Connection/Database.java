@@ -1,11 +1,18 @@
 package Connection;
 
 import Crypto.Decryption;
+import FileReporsitory.FileRepository;
+import Logger.Logger;
+
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
+
 import static Constants.Constants.*;
 
 public class Database {
@@ -34,12 +41,28 @@ public class Database {
             preparedStatement.setString(4, String.valueOf(path));
             preparedStatement.setString(5, custom);
             preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Do you want to replace the file Or Make a version of it ?, Y/N");
+            Scanner sc = new Scanner(System.in);
+            String choice = sc.next();
+            if(Objects.equals(choice, "y") || choice == "Y"){
+                //replace
+                //1: file repo
+                File file = new File(path.toUri());
+                FileRepository.files.put(String.valueOf(name),file);
+                //2: database
 
-            System.out.println("Row Inserted");
-        } catch (SQLException var7) {
-            System.out.println(var7.getMessage());
+            } else if (choice == "n" || choice == "N") {
+                //versioning
+            }
+            else{
+                System.out.println("Wrong input !!");
+                Logger.logWarning("Wrong input in Multi versioning choice ");
+            }
         }
     }
+
+
 
     public static void retrieveFile(String fileName, String custom) {
 
@@ -79,35 +102,39 @@ public class Database {
         }
     }
 
-    public void createFilesTable() {
+    public static void createFilesTable() {
         String query = "CREATE TABLE IF NOT EXISTS files (\n"
                 + " name text NOT NULL,\n"
-                + " category text NOT NULL,\n"
+                + " category text, \n"
                 + " size text NOT NULL,\n"
                 + " path text NOT NULL,\n"
                 + " custom text NOT NULL,\n"
                 + " PRIMARY KEY (name, custom)\n"
                 + ")";
         try {
-            Statement stmt = this.connection.createStatement();
+            Statement stmt = getConnection().createStatement();
             stmt.execute(query);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void createUserTable() {
+    public static void createUserTable() {
         String query = "CREATE TABLE IF NOT EXISTS users (" +
                 "username text PRIMARY KEY NOT NULL, " +
                 "password text NOT NULL, " +
                 "role text NOT NULL)";
 
         try {
-            Statement stmt = this.connection.createStatement();
+            Statement stmt = getConnection().createStatement();
             stmt.execute(query);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+    static {
+        createUserTable();
+        createFilesTable();
     }
 
     public static Connection getConnection() throws SQLException {
