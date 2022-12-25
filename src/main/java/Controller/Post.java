@@ -55,7 +55,7 @@ public class Post {
     private static String file_path() throws PostException {
         JFileChooser file = new JFileChooser();
         file.setMultiSelectionEnabled(true);
-        file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        file.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         file.setFileHidingEnabled(false);
         try {
             return check_file_path(file);

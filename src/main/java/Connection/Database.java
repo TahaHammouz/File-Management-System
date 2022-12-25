@@ -115,9 +115,8 @@ public class Database {
             Path targetPath = Path.of(downloadPath + "/" + Decryption.decrypt(fileName));
 
             if (Files.exists(sourcePath)) {
-                List<String> lines = Files.readAllLines(sourcePath);
                 Files.createFile(targetPath);
-                Files.write(targetPath, lines);
+                Files.copy(targetPath, sourcePath);
 
                 if (Files.exists(targetPath)) {
                     System.out.println("\nExported File Successfully: " + targetPath);
