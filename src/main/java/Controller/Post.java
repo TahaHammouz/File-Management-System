@@ -1,76 +1,90 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package Controller;
 
 import Connection.Database;
 import Crypto.Encryption;
+import Exception.*;
+
+import Logger.Logger;
+
+import javax.swing.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Objects;
-import javax.swing.JFileChooser;
+
+import static Constants.Constants.*;
+
+import FileReporsitory.FileRepository;
+import Logger.Logger;
+
+import static Constants.Constants.*;
 
 public class Post {
     static Path path = null;
-    private static final int kilobyte = 1024;
-    private static final int megabyte = (1024*1024);
-
-    public Post() {    }
 
     public static void importFile() throws Exception {
+
         path = Path.of(Objects.requireNonNull(file_path()));
-        if (Files.exists(path)) {
-            Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(), file_size(), path, file_custom());
-        } else {
-            System.out.println("nah");
-        }
-
-    }
-
-    private static String file_custom() {
+        File file = new File(path.toUri());
+        FileRepository.addFile(file);
         try {
-            long bytes = Files.size(path);
-            if (bytes < kilobyte) {
-                return "small";
-            } else {
-                return bytes < megabyte ? "medium" : "large";
+            if (Files.exists(path)) {
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(),
+                        file_size(), path, file_custom());
             }
-        } catch (IOException var2) {
-            System.out.println("An error occurred while getting the file custom: " + var2.getMessage());
-            return null;
+        } catch (PostException e) {
+            System.out.println(e.getMessage());
+            Logger.logInfo("user haven't attached any file");
         }
     }
 
-    private static String file_path() {
+    private static String file_custom() throws IOException {
+
+        long bytes = Files.size(path);
+        if (bytes < KILOBYTE) {
+            return SMALL;
+        } else if (bytes < MEGABYTE) {
+            return MEDIUM;
+
+        }
+        return LARGE;
+    }
+
+    private static String file_path() throws PostException {
         JFileChooser file = new JFileChooser();
         file.setMultiSelectionEnabled(true);
-        file.setFileSelectionMode(2);
+        file.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         file.setFileHidingEnabled(false);
-        if (file.showOpenDialog(null) == 0) {
+        try {
+            return check_file_path(file);
+
+        } catch (Exception e) {
+            Logger.logWarning("the user does not choose any file");
+            return e.getMessage();
+        }
+
+    }
+    private static String check_file_path(JFileChooser file) throws Exception {
+        if (file.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File f = file.getSelectedFile();
             return f.getPath();
         } else {
-            return null;
+            throw new PostException("You haven't attached any file !");
         }
     }
-
-    private static String file_size() {
+    private static String file_size() throws Exception {
         try {
             long bytes = Files.size(path);
-            if (bytes < kilobyte) {
+            if (bytes < KILOBYTE) {
                 return String.format("%,d bytes", (int)bytes);
             } else {
-                return bytes < megabyte ? String.format("%,d kilobytes", (int)bytes / kilobyte) : String.format("%,d megabytes", (int)bytes / megabyte);
+                return bytes < MEGABYTE ? String.format("%,d kilobytes", (int)bytes / KILOBYTE) : String.format("%,d megabytes", (int)bytes / MEGABYTE);
             }
-        } catch (IOException var2) {
-            System.out.println("An error occurred while getting the file size: " + var2.getMessage());
-            return null;
+        } catch (Exception e) {
+            throw new Exception("An error occurred while getting the file size:" + e.getMessage());
+
         }
     }
 
@@ -78,7 +92,7 @@ public class Post {
         try {
             return Files.probeContentType(path);
         } catch (NullPointerException var1) {
-            return "this category is not found in files";
+            return "This category is not found in files";
         } catch (IOException var2) {
             throw new RuntimeException(var2);
         }
