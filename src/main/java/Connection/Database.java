@@ -162,8 +162,8 @@ public class Database {
         }
     }
     static {
-        createUserTable();
-        createFilesTable();
+        Database.createUserTable();
+        Database.createFilesTable();
     }
 
     public static Connection getConnection() throws SQLException {
