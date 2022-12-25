@@ -19,10 +19,8 @@ public class Get {
         String custom = scanner.nextLine();
 
         if(files.containsKey(fileName)){
-            System.out.println("get file from hashmap");
             FileRepository.getFile(fileName);
         }else {
-            System.out.println("get file from db");
             retrieveFile(Encryption.encrypt(fileName), custom);
 
         }
