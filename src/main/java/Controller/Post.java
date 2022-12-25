@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import static Constants.Constants.*;
 
@@ -24,43 +25,20 @@ public class Post {
     static Path path = null;
 
     public static void importFile() throws Exception {
-        try{
-            path = Path.of(Objects.requireNonNull(file_path()));
-            File file = new File(path.toUri());
-            FileRepository.addFile(file);
+
+        path = Path.of(Objects.requireNonNull(file_path()));
+        File file = new File(path.toUri());
+        FileRepository.addFile(file);
+        try {
             if (Files.exists(path)) {
                 Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(),
                         file_size(), path, file_custom());
             }
-        }catch(PostException e){
+        } catch (PostException e) {
             System.out.println(e.getMessage());
             Logger.logInfo("user haven't attached any file");
-
-
-    public Post() {    }
-
-    public static void importFile() throws Exception {
-        path = Path.of((file_path()));
-        System.out.println(path);
-        if (Files.exists(path) ) {
-            Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(), file_size(), path, file_custom());
-        }else {
-            System.out.println("Try again !!");
-
         }
     }
-
-
-    public static String file_custom() throws Exception {
-        try {
-            long bytes = Files.size(path);
-            if (bytes < kilobyte) {
-                return "small";
-            } else {
-                return bytes < megabyte ? "medium" : "large";
-            }
-        } catch (Exception e) {
-            throw new Exception("An error occurred while getting the file custom" + e.getMessage());
 
     private static String file_custom() throws IOException {
 
@@ -72,7 +50,6 @@ public class Post {
 
         }
         return LARGE;
-
     }
 
     private static String file_path() throws PostException {
@@ -94,19 +71,10 @@ public class Post {
             File f = file.getSelectedFile();
             return f.getPath();
         } else {
-
             throw new PostException("You haven't attached any file !");
         }
     }
-
-    public static String file_size() throws Exception {
-
-            throw new Exception("you haven't attach any file");
-        }
-    }
-
-
-        private static String file_size() {
+    private static String file_size() throws Exception {
         try {
             long bytes = Files.size(path);
             if (bytes < KILOBYTE) {
@@ -124,7 +92,7 @@ public class Post {
         try {
             return Files.probeContentType(path);
         } catch (NullPointerException var1) {
-            return "this category is not found in files";
+            return "This category is not found in files";
         } catch (IOException var2) {
             throw new RuntimeException(var2);
         }

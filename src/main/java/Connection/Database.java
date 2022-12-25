@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static Authentication.AddUser.getConnection;
 import static Constants.Constants.*;
 import static Controller.Post.*;
 import static FileReporsitory.FileRepository.files;
@@ -34,7 +35,7 @@ public class Database {
     public static void insertFile(String name, String category,
                                   String size, Path path, String custom) throws Exception {
 
-        String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
+        final String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(query);
@@ -60,8 +61,8 @@ public class Database {
                     files.put(String.valueOf(name),file);
                 }
 
-                deleteFile(String.valueOf(path.getFileName()));
-                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),file_category(), file_size(), path, file_custom());
+                deleteFile(String.valueOf(path.getFileName()) , custom);
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),category, size, path, custom);
 
             } else if (Objects.equals(choice, "v") || Objects.equals(choice, "V")) {
                 //versioning
@@ -75,14 +76,15 @@ public class Database {
 
 
 
-    public static void deleteFile(String name) {
-        String sql = "DELETE FROM files WHERE name = ?";
+    public static void deleteFile(String name , String custom) {
+        final String query = "DELETE FROM files WHERE name = ? AND custom = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(query);
             stmt.setString(1, Encryption.encrypt(name));
-
+            stmt.setString(2, custom);
             stmt.executeUpdate();
+            Logger.logInfo("row has been deleted " + name + "/" + custom);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
@@ -130,7 +132,7 @@ public class Database {
     }
 
     public static void createFilesTable() {
-        String query = "CREATE TABLE IF NOT EXISTS files (\n"
+        final String query = "CREATE TABLE IF NOT EXISTS files (\n"
                 + " name text NOT NULL,\n"
                 + " category text, \n"
                 + " size text NOT NULL,\n"
@@ -147,7 +149,7 @@ public class Database {
     }
 
     public static void createUserTable() {
-        String query = "CREATE TABLE IF NOT EXISTS users (" +
+        final String query = "CREATE TABLE IF NOT EXISTS users (" +
                 "username text PRIMARY KEY NOT NULL, " +
                 "password text NOT NULL, " +
                 "role text NOT NULL)";
