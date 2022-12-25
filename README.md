@@ -24,3 +24,15 @@ With this File-Management, It is easy to give permissions to users, and your fil
 - ```java SecretKeySpec``` class is used to represent a secret key for a cryptographic algorithm. 
 - ```java doFinal``` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation.
 - ```java decode``` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
+
+## Class Diagram
+[Here the image of class diagram]
+
+## C4 Diagram
+[Here the image of c4 diagram]
+
+## Contributors
+Abed Kharoubi
+Taha Hammouz
+Malak Mousa
+
