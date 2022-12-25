@@ -32,7 +32,7 @@ With this File-Management, It is easy to give permissions to users, and your fil
 [Here the image of c4 diagram]
 
 ## Contributors
-Abed Kharoubi
-Taha Hammouz
-Malak Mousa
+Abed Kharoubi.
+Taha Hammouz.
+Malak Mousa.
 
