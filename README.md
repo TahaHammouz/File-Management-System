@@ -26,7 +26,7 @@ With this File-Management, It is easy to give permissions to users, and your fil
 - ```java decode``` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
 
 ## Class Diagram
-[Here the image of class diagram]
+<img width="2850" alt="Untitled (1)" src="https://user-images.githubusercontent.com/68341943/209454593-feefe646-c341-4297-84c4-202611d810cb.png">
 
 ## C4 Diagram
 [Here the image of c4 diagram]
