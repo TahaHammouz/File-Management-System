@@ -1,6 +1,7 @@
 package Connection;
 
 import Crypto.Decryption;
+import Crypto.Encryption;
 import FileReporsitory.FileRepository;
 import Logger.Logger;
 
@@ -14,6 +15,8 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import static Constants.Constants.*;
+import static Controller.Post.*;
+import static FileReporsitory.FileRepository.files;
 
 public class Database {
     private  Connection connection;
@@ -29,7 +32,7 @@ public class Database {
     }
 
     public static void insertFile(String name, String category,
-                                  String size, Path path, String custom) {
+                                  String size, Path path, String custom) throws Exception {
 
         String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
 
@@ -42,17 +45,25 @@ public class Database {
             preparedStatement.setString(5, custom);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
-            System.out.println("Do you want to replace the file Or Make a version of it ?, Y/N");
+            System.out.println("File is already exist (R) To replace/(V) to make a version of it, R/V");
             Scanner sc = new Scanner(System.in);
             String choice = sc.next();
-            if(Objects.equals(choice, "y") || choice == "Y"){
+            if(Objects.equals(choice, "r") || Objects.equals(choice, "R")){
                 //replace
                 //1: file repo
                 File file = new File(path.toUri());
-                FileRepository.files.put(String.valueOf(name),file);
-                //2: database
+                if(files.containsKey(file)){
+                    files.remove(file);
+                    files.put(String.valueOf(name),file);
 
-            } else if (choice == "n" || choice == "N") {
+                }else{
+                    files.put(String.valueOf(name),file);
+                }
+
+                deleteFile(String.valueOf(path.getFileName()));
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),file_category(), file_size(), path, file_custom());
+
+            } else if (Objects.equals(choice, "v") || Objects.equals(choice, "V")) {
                 //versioning
             }
             else{
@@ -62,6 +73,22 @@ public class Database {
         }
     }
 
+
+
+    public static void deleteFile(String name) {
+        String sql = "DELETE FROM files WHERE name = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, Encryption.encrypt(name));
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     public static void retrieveFile(String fileName, String custom) {

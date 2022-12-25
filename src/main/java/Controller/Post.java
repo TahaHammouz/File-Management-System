@@ -2,9 +2,12 @@ package Controller;
 
 import Connection.Database;
 import Crypto.Encryption;
+import Exception.*;
+
 import Logger.Logger;
 
 import javax.swing.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,8 +15,27 @@ import java.nio.file.Path;
 
 import static Constants.Constants.*;
 
+import FileReporsitory.FileRepository;
+import Logger.Logger;
+
+import static Constants.Constants.*;
+
 public class Post {
     static Path path = null;
+
+    public static void importFile() throws Exception {
+        try{
+            path = Path.of(Objects.requireNonNull(file_path()));
+            File file = new File(path.toUri());
+            FileRepository.addFile(file);
+            if (Files.exists(path)) {
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(),
+                        file_size(), path, file_custom());
+            }
+        }catch(PostException e){
+            System.out.println(e.getMessage());
+            Logger.logInfo("user haven't attached any file");
+
 
     public Post() {    }
 
@@ -24,9 +46,21 @@ public class Post {
             Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(), file_size(), path, file_custom());
         }else {
             System.out.println("Try again !!");
-        }
 
+        }
     }
+
+
+    public static String file_custom() throws Exception {
+        try {
+            long bytes = Files.size(path);
+            if (bytes < kilobyte) {
+                return "small";
+            } else {
+                return bytes < megabyte ? "medium" : "large";
+            }
+        } catch (Exception e) {
+            throw new Exception("An error occurred while getting the file custom" + e.getMessage());
 
     private static String file_custom() throws IOException {
 
@@ -35,12 +69,13 @@ public class Post {
             return SMALL;
         } else if (bytes < MEGABYTE) {
             return MEDIUM;
+
         }
         return LARGE;
 
     }
 
-    private static String file_path() {
+    private static String file_path() throws PostException {
         JFileChooser file = new JFileChooser();
         file.setMultiSelectionEnabled(true);
         file.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -59,6 +94,13 @@ public class Post {
             File f = file.getSelectedFile();
             return f.getPath();
         } else {
+
+            throw new PostException("You haven't attached any file !");
+        }
+    }
+
+    public static String file_size() throws Exception {
+
             throw new Exception("you haven't attach any file");
         }
     }
@@ -72,9 +114,9 @@ public class Post {
             } else {
                 return bytes < MEGABYTE ? String.format("%,d kilobytes", (int)bytes / KILOBYTE) : String.format("%,d megabytes", (int)bytes / MEGABYTE);
             }
-        } catch (IOException var2) {
-            System.out.println("An error occurred while getting the file size: " + var2.getMessage());
-            return null;
+        } catch (Exception e) {
+            throw new Exception("An error occurred while getting the file size:" + e.getMessage());
+
         }
     }
 
