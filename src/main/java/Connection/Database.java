@@ -21,18 +21,19 @@ public class Database {
         }
     }
 
-    public static void insertFile(String name, String category,
+    public static void insertFile(String name, String type, String category,
                                   String size, Path path, String custom) {
 
-        String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
+        final String query = "INSERT INTO files(name, type, category, size, path, custom) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(query);
             preparedStatement.setString(1, String.valueOf(name));
-            preparedStatement.setString(2, category);
-            preparedStatement.setString(3, size);
-            preparedStatement.setString(4, String.valueOf(path));
-            preparedStatement.setString(5, custom);
+            preparedStatement.setString(2, type);
+            preparedStatement.setString(3, category);
+            preparedStatement.setString(4, size);
+            preparedStatement.setString(5, String.valueOf(path));
+            preparedStatement.setString(6, custom);
             preparedStatement.executeUpdate();
 
             System.out.println("Row Inserted");
@@ -79,17 +80,18 @@ public class Database {
         }
     }
 
-    public void createFilesTable() {
-        String query = "CREATE TABLE IF NOT EXISTS files (\n"
-                + " name text NOT NULL,\n"
-                + " category text NOT NULL,\n"
-                + " size text NOT NULL,\n"
-                + " path text NOT NULL,\n"
-                + " custom text NOT NULL,\n"
-                + " PRIMARY KEY (name, custom)\n"
-                + ")";
+    public static void createFilesTable() {
+        final String query = "CREATE TABLE IF NOT EXISTS files (" +
+                "name text NOT NULL, " +
+                "type text NOT NULL, " +
+                "category text, " +
+                "size text NOT NULL, " +
+                "path text NOT NULL," +
+                " custom text NOT NULL," +
+                " PRIMARY KEY (name, custom)" +
+                ")";
         try {
-            Statement stmt = this.connection.createStatement();
+            Statement stmt = getConnection().createStatement();
             stmt.execute(query);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
