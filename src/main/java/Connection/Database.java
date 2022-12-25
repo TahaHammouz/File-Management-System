@@ -19,6 +19,7 @@ import static Constants.Constants.*;
 import static Controller.Post.*;
 import static FileReporsitory.FileRepository.files;
 
+
 public class Database {
     private  Connection connection;
 
@@ -34,47 +35,116 @@ public class Database {
 
     public static void insertFile(String name, String category,
                                   String size, Path path, String custom) throws Exception {
+        String query = "INSERT INTO files(name,version, category, size, path, custom) VALUES (?, ?, ?, ?,?,?)";
+//        try {
+//            PreparedStatement(name, category, size, path, custom, query);
+//        } catch (Exception e) {
+//            System.out.println("File is already exist (R) To replace/(V) to make a version of it, R/V");
+//            Scanner sc = new Scanner(System.in);
+//            String choice = sc.next();
+//            if(Objects.equals(choice, "r") || Objects.equals(choice, "R")){
+//                File file = new File(path.toUri());
+//                if(files.containsKey(file)){
+//                    files.remove(file);
+//                    files.put(String.valueOf(name),file);
+//                }else{
+//                    files.put(String.valueOf(name),file);
+//                }
+//                   deleteFile(String.valueOf(path.getFileName()), custom);
+//                    Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), category, size, path, custom);
+//
+//            } else if (Objects.equals(choice, "v") || Objects.equals(choice, "V")) {
+//                //versioning
+//                insertNewVersion(String.valueOf(name),category,size, Path.of(String.valueOf(path)),custom);
+//
+//            }
+//            else{
+//                System.out.println("Wrong input !!");
+//                Logger.logWarning("Wrong input in Multi versioning choice ");
+//            }
+//        }
 
-        final String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
-
-        try {
+            try{
             PreparedStatement preparedStatement = getConnection().prepareStatement(query);
+            PreparedStatement(name, category, size, path, custom, query);
             preparedStatement.setString(1, String.valueOf(name));
-            preparedStatement.setString(2, category);
-            preparedStatement.setString(3, size);
-            preparedStatement.setString(4, String.valueOf(path));
-            preparedStatement.setString(5, custom);
+            preparedStatement.setString(3, category);
+            preparedStatement.setString(4, size);
+            preparedStatement.setString(5, String.valueOf(path));
+            preparedStatement.setString(6, custom);
             preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("File is already exist (R) To replace/(V) to make a version of it, R/V");
+            }catch (Exception e){
+            System.out.println("File is already exist (R) To replace (V) to make a version of it,");
             Scanner sc = new Scanner(System.in);
             String choice = sc.next();
-            if(Objects.equals(choice, "r") || Objects.equals(choice, "R")){
-                //replace
-                //1: file repo
-                File file = new File(path.toUri());
-                if(files.containsKey(file)){
-                    files.remove(file);
-                    files.put(String.valueOf(name),file);
+            switch (choice) {
+                case "r":
+                case "R":
+                    File file = new File(path.toUri());
+                    if (files.containsKey(file)) {
+                        files.remove(file);
+                        files.put(String.valueOf(name), file);
 
-                }else{
-                    files.put(String.valueOf(name),file);
-                }
+                    } else {
+                        files.put(String.valueOf(name), file);
+                    }
 
-                deleteFile(String.valueOf(path.getFileName()) , custom);
-                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),category, size, path, custom);
+                    deleteFile(String.valueOf(path.getFileName()), custom);
+                    Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), category, size, path, custom);
+                    break;
+                case "v":
+                case "V":
+                    //versioning
 
-            } else if (Objects.equals(choice, "v") || Objects.equals(choice, "V")) {
-                //versioning
-            }
-            else{
-                System.out.println("Wrong input !!");
-                Logger.logWarning("Wrong input in Multi versioning choice ");
+                    //Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), category, size, path, custom);
+                    insertNewVersion(name, category, size, path, custom);
+
+                    break;
+                default:
+                    System.out.println("Wrong input !!");
+                    Logger.logWarning("Wrong input in Multi versioning choice ");
+                    break;
             }
         }
     }
 
+    private static void PreparedStatement(String name, String category, String size, Path path, String custom, String query) throws SQLException {
+        PreparedStatement preparedStatement = getConnection().prepareStatement(query);
+        preparedStatement.setString(1, String.valueOf(name));
+        preparedStatement.setString(3, category);
+        preparedStatement.setString(4, size);
+        preparedStatement.setString(5, String.valueOf(path));
+        preparedStatement.setString(6, custom);
+        preparedStatement.executeUpdate();
+    }
 
+    public static void insertNewVersion(String fileName,String category,
+                                        String size, Path path, String custom )throws SQLException{
+        String sql = "INSERT INTO files (name, version, category, size, path, custom) "
+                + "SELECT name, version, ?, ?, ?, ? FROM (SELECT ? AS name, (SELECT COALESCE(MAX(version), 0) + 1 FROM files WHERE name = ?) AS version) AS tmp "
+                + "WHERE NOT EXISTS ( "
+                + "    SELECT name FROM files WHERE name = ? "
+                + ") LIMIT 1";
+//        try {
+//            PreparedStatement(fileName, category, size, path, custom, sql);
+
+
+        try (Connection conn = DriverManager.getConnection(SQLiteURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String man = fileName + "1";
+            pstmt.setString(1, man);
+            //pstmt.setString(2, version);
+            pstmt.setString(3, category);
+            pstmt.setString(4, size);
+            pstmt.setString(5, String.valueOf(path));
+            pstmt.setString(6, custom);
+
+            pstmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public static void deleteFile(String name , String custom) {
         final String query = "DELETE FROM files WHERE name = ? AND custom = ?";
@@ -134,11 +204,12 @@ public class Database {
     public static void createFilesTable() {
         final String query = "CREATE TABLE IF NOT EXISTS files (\n"
                 + " name text NOT NULL,\n"
+                + " version int NOT NULL, \n"
                 + " category text, \n"
-                + " size text NOT NULL,\n"
+                + " size text ,\n"
                 + " path text NOT NULL,\n"
-                + " custom text NOT NULL,\n"
-                + " PRIMARY KEY (name, custom)\n"
+                + " custom text ,\n"
+               + " PRIMARY KEY (name)\n"
                 + ")";
         try {
             Statement stmt = getConnection().createStatement();
@@ -170,3 +241,5 @@ public class Database {
         return DriverManager.getConnection(SQLiteURL);
     }
 }
+
+

@@ -1,9 +1,13 @@
+import Connection.Database;
+import Controller.Post;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-//        Post.importFile();
+        Database.createFilesTable();
+        Post.importFile();
 //        String name = "file.txt";
 //        String EName;
 //
@@ -71,28 +75,28 @@ public class Main {
 //            }
 //        }
 
-        JFrame frame = new JFrame("My Frame");
-
-        
-        // Create the OK button
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(e -> {
-            // Do something when the OK button is clicked
-            System.out.println("OK button was clicked!");
-        });
-
-        // Create the Cancel button
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(e -> {
-            // Do something when the Cancel button is clicked
-            System.out.println("Cancel button was clicked!");
-        });
-
-        // Add the buttons to the frame
-        frame.add(okButton, BorderLayout.WEST);
-        frame.add(cancelButton, BorderLayout.EAST);
-
-        frame.pack();
-        frame.setVisible(true);
+//        JFrame frame = new JFrame("My Frame");
+//
+//
+//        // Create the OK button
+//        JButton okButton = new JButton("OK");
+//        okButton.addActionListener(e -> {
+//            // Do something when the OK button is clicked
+//            System.out.println("OK button was clicked!");
+//        });
+//
+//        // Create the Cancel button
+//        JButton cancelButton = new JButton("Cancel");
+//        cancelButton.addActionListener(e -> {
+//            // Do something when the Cancel button is clicked
+//            System.out.println("Cancel button was clicked!");
+//        });
+//
+//        // Add the buttons to the frame
+//        frame.add(okButton, BorderLayout.WEST);
+//        frame.add(cancelButton, BorderLayout.EAST);
+//
+//        frame.pack();
+//        frame.setVisible(true);
     }
 }

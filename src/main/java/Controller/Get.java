@@ -27,13 +27,5 @@ public class Get {
 
         }
 
-
-
-
-
-
-
-
-
     }
 }
