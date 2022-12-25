@@ -1,7 +1,14 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
+import Connection.ClasseficationFiles;
+import Connection.Database;
+import Controller.Post;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        Database.getConnection();
+        Database.createFilesTable();
+        Post.importFile();
+        ClasseficationFiles.classifyFiles();
 
 import Authentication.AddUser;
 import Authentication.Login;
