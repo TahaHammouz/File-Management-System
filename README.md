@@ -29,10 +29,10 @@ With this File-Management, It is easy to give permissions to users, and your fil
 <img width="2850" alt="Untitled (1)" src="https://user-images.githubusercontent.com/68341943/209454593-feefe646-c341-4297-84c4-202611d810cb.png">
 
 ## Class Diagram
-[Here the image of class diagram]
+<img width="4149" alt="Untitled (2)" src="https://user-images.githubusercontent.com/68341943/209506331-a7cc3441-6b17-494b-adf1-a524de69b6a7.png">
 
 ## C4 Diagram
-[Here the image of c4 diagram]
+<img width="9107" alt="C4 model - File Management System (4)" src="https://user-images.githubusercontent.com/68341943/209506497-c7754097-6de8-41be-9cd5-b7f3986897c6.png">
 
 ## Contributors
 Abed Kharoubi
