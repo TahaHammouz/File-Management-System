@@ -15,18 +15,18 @@ public static Connection getConnection() throws SQLException {
 }
 ```
 
-This Statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
+* This Statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
 ```java
 Class.forName("org.sqlite.JDBC");
 ```
 
-Represents a SQL statement. `execute` method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL statement.
+* Represents a SQL statement. `execute` method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL statement.
 ```java 
 Statement stmt = getConnection().createStatement();
 stmt.execute(query);
 ```
 
-PreparedStatement used to execute the same or similar SQL statements multiple times with different parameter values. ResultSet represents the results of a SQL query. It is used to retrieve and process the rows of the results returned by a `Statement` or `PreparedStatement`.
+* PreparedStatement used to execute the same or similar SQL statements multiple times with different parameter values. ResultSet represents the results of a SQL query. It is used to retrieve and process the rows of the results returned by a `Statement` or `PreparedStatement`.
 ```java 
 PreparedStatement preparedStatement = getConnection().prepareStatement(query);
 preparedStatement.setString(1, fileName);
@@ -35,9 +35,22 @@ preparedStatement.setString(2, custom);
 ResultSet rs = preparedStatement.executeQuery();
 ```
 
-- ```java executeQuery``` method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL SELECT statement only and retrieve the results of the query.
+`executeQuery` method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL SELECT statement only and retrieve the results of the query.
+```java
+String query = "DELETE FROM Files WHERE name = ? AND custom = ?";
 
-Method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL statement.
+try {
+    PreparedStatement preparedStatement = getConnection().prepareStatement(query);
+    preparedStatement.setString(1, fileName);
+    preparedStatement.setString(2, custom);
+    preparedStatement.executeUpdate();
+    System.out.println("file is deleted");
+
+    FileRepository.removeFile(new File(fileName));
+} 
+```
+
+* Method in the `Statement` and `PreparedStatement` classes that are used to execute a SQL statement.
 ```java 
 try (
         Connection con = getConnection(); 
@@ -51,7 +64,7 @@ try (
 }
 ```
 
-`Path` class represents a file or directory path. It is used to manipulate file and directory paths and perform operations on what they represent. `File` class provides various static methods for performing operations on files and directories.
+* `Path` class represents a file or directory path. It is used to manipulate file and directory paths and perform operations on what they represent. `File` class provides various static methods for performing operations on files and directories.
 ```java path = Path.of(Objects.requireNonNull(file_path()));
 File file = new File(path.toUri());
 FileRepository.addFile(file);
@@ -63,7 +76,7 @@ try {
 }
 ```
 
-This method for encrypt file name. `MessageDigest` class is used to generate cryptographic hash values for data, `digest` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data, `Cipher` class is used to perform encryption and decryption using various cryptographic algorithms,      `SecretKeySpec` class is used to represent a secret key for a cryptographic algorithm, `doFinal` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation, and `decode` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
+* This method for encrypt file name. `MessageDigest` class is used to generate cryptographic hash values for data, `digest` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data, `Cipher` class is used to perform encryption and decryption using various cryptographic algorithms,      `SecretKeySpec` class is used to represent a secret key for a cryptographic algorithm, `doFinal` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation, and `decode` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
 ```java 
 public static String encrypt(String fileName) throws Exception {
     MessageDigest digest = MessageDigest.getInstance(KEY_DERIVATION_ALGORITHM);
