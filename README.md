@@ -9,7 +9,8 @@ With this File-Management, It is easy to give permissions to users, and your fil
 ### Here are the built-in methods that are used in we project:
 - ```java DriverManager``` is typically used to establish a connection to a database.
 - ```java getConnection``` method in the DriverManager class at is used to establish a connection to a database. It takes a URL as an argument and returns a Connection object that represents the connection to the database.
-- ```java Class.forName("org.sqlite.JDBC");``` statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
+- ```java 
+Class.forName("org.sqlite.JDBC");``` statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
 - ```java Statement``` represents a SQL statement.
 - ```java PreparedStatement``` is used to execute the same or similar SQL statements multiple times with different parameter values.
 - ```java ResultSet``` represents the results of a SQL query. It is used to retrieve and process the rows of the results returned by a `Statement` or `PreparedStatement`.
