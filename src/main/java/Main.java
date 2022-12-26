@@ -1,28 +1,19 @@
-import Connection.ClasseficationFiles;
+import Connection.ClassificationFiles;
 import Connection.Database;
 import Controller.Post;
-
-public class Main {
-
-    public static void main(String[] args) throws Exception {
-        Database.getConnection();
-        Database.createFilesTable();
-        Post.importFile();
-        ClasseficationFiles.classifyFiles();
-
 import Authentication.AddUser;
 import Authentication.Login;
 import Authentication.User;
-import Connection.Database;
 import Controller.Delete;
 import Controller.Get;
-import Controller.Post;
 import Exception.AuthException;
+import Logger.Logger;
+
 import java.sql.SQLException;
 import java.util.Scanner;
 
+
 public class Main {
-    public static String choose;
     public static Scanner scanner;
     public static String username;
     public static String password;
@@ -30,9 +21,6 @@ public class Main {
     public static boolean isStaff;
     public static String position;
     public static User user;
-
-    public Main() {
-    }
 
     public static void main(String[] args) throws Exception {
         new Database();
@@ -70,23 +58,26 @@ public class Main {
 
         while(true) {
             System.out.println("--- File Management System Menu ---");
-            System.out.println("1. View files");
+            System.out.println("1. View file");
             System.out.println("2. classification file");
             if (isStaff) {
                 System.out.println("3. Import file");
                 System.out.println("4. Export file");
+                System.out.println("5. view logger");
             }
 
             if (isAdmin) {
-                System.out.println("5. Delete file");
+                System.out.println("6. Delete file");
             }
 
-            System.out.println("6. Log out");
+            System.out.println("7. Log out");
             System.out.println("Enter the number of the option you would like to choose:");
             int choice = scanner.nextInt();
             switch (choice) {
                 case 1:
+
                 case 2:
+                    ClassificationFiles.classifyFiles();
                     break;
                 case 3:
                     Post.importFile();
@@ -95,9 +86,12 @@ public class Main {
                     Get.exportFile();
                     break;
                 case 5:
-                    Delete.deleteFile();
+                    Logger.SaveLogs();
                     break;
                 case 6:
+                    Delete.deleteFile();
+                    break;
+                case 7:
                     return;
                 default:
                     System.out.println("Invalid option. Please try again.");
@@ -105,7 +99,7 @@ public class Main {
         }
     }
 
-    public static User signup() throws SQLException, AuthException {
+    public static User signup(){
         System.out.println("Enter your user name");
         username = scanner.next();
         System.out.println("Enter your password ");
