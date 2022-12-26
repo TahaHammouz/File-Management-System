@@ -66,6 +66,20 @@ public class Database {
     }
 
 
+    public static void viewFiles() throws Exception {
+        Statement stmt = getConnection().createStatement();
+        final String query = "SELECT * FROM files";
+        ResultSet rs = stmt.executeQuery(query);
+
+        // Iterate through the result set and print the values
+        while (rs.next()) {
+            String name = rs.getString("name");
+            String category = rs.getString("category");
+            String size = rs.getString("size");
+            String custom = rs.getString("custom");
+            System.out.println(Decryption.decrypt(name) + " : " + category+ " : " + size + " : " + custom );
+        }
+    }
 
     public static void deleteFile(String name , String custom) {
         final String query = "DELETE FROM files WHERE name = ? AND custom = ?";

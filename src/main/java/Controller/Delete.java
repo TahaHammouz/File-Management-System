@@ -15,7 +15,6 @@ public class Delete {
         String fileName = scanner.nextLine();
         System.out.println("What is the file size ? small, medium or large?:");
         String custom = scanner.nextLine();
-
         String query = "DELETE FROM Files WHERE name = ? AND custom = ?";
 
         try {

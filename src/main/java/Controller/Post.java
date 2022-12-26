@@ -45,7 +45,6 @@ public class Post {
             return SMALL;
         } else if (bytes < MEGABYTE) {
             return MEDIUM;
-
         }
         return LARGE;
     }

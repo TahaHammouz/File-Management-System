@@ -12,9 +12,11 @@ import Logger.Logger;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import static Connection.Database.viewFiles;
+
 
 public class Main {
-    public static Scanner scanner;
+    public static Scanner scanner = new Scanner(System.in);
     public static String username;
     public static String password;
     public static boolean isAdmin;
@@ -33,6 +35,7 @@ public class Main {
             System.out.println("2. Sign up");
             System.out.println("Enter the number of the option you would like to choose:");
             int choice = scanner.nextInt();
+//            int choice = 1;
             switch (choice) {
                 case 1:
                     user = signin();
@@ -73,9 +76,11 @@ public class Main {
             System.out.println("7. Log out");
             System.out.println("Enter the number of the option you would like to choose:");
             int choice = scanner.nextInt();
+//            int choice = 1;
             switch (choice) {
                 case 1:
-
+                    viewFiles();
+                    break;
                 case 2:
                     ClassificationFiles.classifyFiles();
                     break;
@@ -114,13 +119,14 @@ public class Main {
     public static User signin() throws SQLException, AuthException {
         System.out.println("Enter your user name");
         username = scanner.next();
+//        username = "abd";
         System.out.println("Enter your password ");
         password = scanner.next();
+//        password = "123";
         return Login.loginDatabase(username, password);
     }
 
     static {
-        scanner = new Scanner(System.in);
         isAdmin = false;
         isStaff = false;
     }
