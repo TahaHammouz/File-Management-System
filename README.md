@@ -8,7 +8,7 @@ With this File-Management, It is easy to give permissions to users, and your fil
 ## Built-in Classes and Methods used
 ### Here are the built-in methods that are used in we project:
 
-DriverManager is typically used to establish a connection to a database, getConnection method in the DriverManager class at is used to establish a connection to a database. It takes a URL as an argument and returns a Connection object that represents the connection to the database.
+* DriverManager is typically used to establish a connection to a database, getConnection method in the DriverManager class at is used to establish a connection to a database. It takes a URL as an argument and returns a Connection object that represents the connection to the database.
 ```java 
 public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(SQLiteURL);
@@ -60,9 +60,10 @@ try {
         Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_type(),
                 file_category(), file_size(), path, file_custom());
     }
-}```
+}
+```
 
-
+This method for encrypt file name. `MessageDigest` class is used to generate cryptographic hash values for data, `digest` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data, `Cipher` class is used to perform encryption and decryption using various cryptographic algorithms,      `SecretKeySpec` class is used to represent a secret key for a cryptographic algorithm, `doFinal` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation, and `decode` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
 ```java 
 public static String encrypt(String fileName) throws Exception {
     MessageDigest digest = MessageDigest.getInstance(KEY_DERIVATION_ALGORITHM);
