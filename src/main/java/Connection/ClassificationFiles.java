@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 import static Connection.Database.getConnection;
 
-public class ClasseficationFiles {
+public class ClassificationFiles {
 
     public static void classifyFiles() {
         Scanner scanner = new Scanner(System.in);
@@ -39,7 +39,7 @@ public class ClasseficationFiles {
 
     public static void classifyType() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nEnter File Type to Classefication:");
+        System.out.println("\nEnter File Type to Classification:");
         String type = scanner.nextLine();
 
         final String query = "SELECT * FROM files WHERE type = ?";

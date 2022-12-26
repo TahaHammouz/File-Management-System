@@ -2,7 +2,6 @@ package Connection;
 
 import Crypto.Decryption;
 import Crypto.Encryption;
-import FileReporsitory.FileRepository;
 import Logger.Logger;
 
 import java.io.File;
@@ -10,36 +9,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static Authentication.AddUser.getConnection;
 import static Constants.Constants.*;
-import static Controller.Post.*;
 import static FileReporsitory.FileRepository.files;
 
 public class Database {
-    private  Connection connection;
 
     public Database() throws ClassNotFoundException {
         // Connect to the database
-        try {
-            Class.forName("org.sqlite.JDBC");
-            this.connection = DriverManager.getConnection(SQLiteURL);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        Class.forName("org.sqlite.JDBC");
     }
-
     public static void insertFile(String name, String type, String category,
-                                  String size, Path path, String custom) {
-
-        final String query = "INSERT INTO files(name, type, category, size, path, custom) VALUES (?, ?, ?, ?, ?, ?)";
-    public static void insertFile(String name, String category,
                                   String size, Path path, String custom) throws Exception {
 
-        final String query = "INSERT INTO files(name, category, size, path, custom) VALUES (?, ?, ?, ?, ?)";
+        final String query = "INSERT INTO files(name, type, category, size, path, custom) VALUES (?, ?, ?, ?, ?, ?)";
 
 
         try {
@@ -55,10 +40,11 @@ public class Database {
             System.out.println("File is already exist (R) To replace/(V) to make a version of it, R/V");
             Scanner sc = new Scanner(System.in);
             String choice = sc.next();
+            File file = new File(path.toUri());
             if(Objects.equals(choice, "r") || Objects.equals(choice, "R")){
                 //replace
                 //1: file repo
-                File file = new File(path.toUri());
+
                 if(files.containsKey(file)){
                     files.remove(file);
                     files.put(String.valueOf(name),file);
@@ -68,18 +54,60 @@ public class Database {
                 }
 
                 deleteFile(String.valueOf(path.getFileName()) , custom);
-                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),category, size, path, custom);
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())),type,category,
+                        size, path, custom);
 
             } else if (Objects.equals(choice, "v") || Objects.equals(choice, "V")) {
-                //versioning
-            }
-            else{
-                System.out.println("Wrong input !!");
-                Logger.logWarning("Wrong input in Multi versioning choice ");
+                Scanner scanner = new Scanner(System.in);
+                System.out.print("Enter a new version name with exception: ");
+                String newName = scanner.next();
+                files.put(String.valueOf(newName),file);
+                Database.insertFile(Encryption.encrypt(newName),type,category,
+                        size, path, custom);
             }
         }
     }
 
+
+    public static void viewFiles() throws Exception {
+        Statement stmt = getConnection().createStatement();
+        final String query = "SELECT * FROM files";
+        ResultSet rs = stmt.executeQuery(query);
+
+        // Iterate through the result set and print the values
+        while (rs.next()) {
+            String name = rs.getString("name");
+            String category = rs.getString("category");
+            String size = rs.getString("size");
+            String custom = rs.getString("custom");
+            System.out.println(Decryption.decrypt(name) + " : " + category+ " : " + size + " : " + custom );
+        }
+    }
+
+    public static void rollBack(String fileName, String custom) throws Exception {
+        final String FILE_QUERY = "SELECT path FROM Files WHERE name = ? AND custom = ?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(FILE_QUERY);
+        preparedStatement.setString(1, fileName);
+        preparedStatement.setString(2, custom);
+
+        ResultSet rs = preparedStatement.executeQuery();
+        rs.next();
+
+        Path path = Paths.get(rs.getString("path"));
+
+        final String PATH_QUERY = "SELECT * FROM files WHERE path = ?";
+        preparedStatement = getConnection().prepareStatement(FILE_QUERY);
+        rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            fileName = rs.getString("name");
+            String category = rs.getString("category");
+            String size = rs.getString("size");
+            custom = rs.getString("custom");
+            System.out.println(Decryption.decrypt(fileName) + " : " + category+ " : " + size + " : " + custom );
+        }
+
+
+    }
 
 
     public static void deleteFile(String name , String custom) {
@@ -87,6 +115,7 @@ public class Database {
 
         try {
             PreparedStatement stmt = getConnection().prepareStatement(query);
+
             stmt.setString(1, Encryption.encrypt(name));
             stmt.setString(2, custom);
             stmt.executeUpdate();
@@ -117,22 +146,28 @@ public class Database {
             String homeDirectory = System.getProperty("user.home");
             Path downloadPath = Paths.get(homeDirectory, "Downloads");
 
-            Path sourcePath = path;
-            Path targetPath = Path.of(downloadPath + "/" + Decryption.decrypt(fileName));
+            Path targetPath = Paths.get(downloadPath + "/" + Decryption.decrypt(fileName));
 
-            if (Files.exists(sourcePath)) {
-                Files.createFile(targetPath);
-                Files.copy(targetPath, sourcePath);
-
-                if (Files.exists(targetPath)) {
-                    System.out.println("\nExported File Successfully: " + targetPath);
+            if (Files.exists(targetPath)) {
+                // Prompt the user to choose a new destination path or overwrite the existing file
+                Scanner scanner = new Scanner(System.in);
+                System.out.print("A file with the same name already exists at the destination path. Do you want to overwrite it? (Y/N) ");
+                String answer = scanner.nextLine();
+                if (!answer.equalsIgnoreCase("Y")) {
+                    System.out.print("Enter a new destination path with exception: ");
+                    targetPath = Paths.get(downloadPath + "/" + scanner.nextLine());
                 }
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            // Copy the file to the destination path
+            try {
+                Files.copy(path, targetPath);
+                System.out.println("File copied successfully.");
+            } catch (Exception e) {
+                System.out.println("An error occurred while copying the file: " + e.getMessage());
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -146,14 +181,6 @@ public class Database {
                 " custom text NOT NULL," +
                 " PRIMARY KEY (name, custom)" +
                 ")";
-        final String query = "CREATE TABLE IF NOT EXISTS files (\n"
-                + " name text NOT NULL,\n"
-                + " category text, \n"
-                + " size text NOT NULL,\n"
-                + " path text NOT NULL,\n"
-                + " custom text NOT NULL,\n"
-                + " PRIMARY KEY (name, custom)\n"
-                + ")";
         try {
             Statement stmt = getConnection().createStatement();
             stmt.execute(query);

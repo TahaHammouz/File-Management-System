@@ -17,9 +17,7 @@ import java.util.Objects;
 import static Constants.Constants.*;
 
 import FileReporsitory.FileRepository;
-import Logger.Logger;
 
-import static Constants.Constants.*;
 
 public class Post {
     static Path path = null;
@@ -31,8 +29,8 @@ public class Post {
         FileRepository.addFile(file);
         try {
             if (Files.exists(path)) {
-                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_category(),
-                        file_size(), path, file_custom());
+                Database.insertFile(Encryption.encrypt(String.valueOf(path.getFileName())), file_type() ,
+                        file_category(),file_size(), path, file_custom());
             }
         } catch (PostException e) {
             System.out.println(e.getMessage());
@@ -47,12 +45,11 @@ public class Post {
             return SMALL;
         } else if (bytes < MEGABYTE) {
             return MEDIUM;
-
         }
         return LARGE;
     }
 
-    private static String file_path() throws PostException {
+    private static String file_path() {
         JFileChooser file = new JFileChooser();
         file.setMultiSelectionEnabled(true);
         file.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -96,5 +93,11 @@ public class Post {
         } catch (IOException var2) {
             throw new RuntimeException(var2);
         }
+    }
+    private static String file_type() {
+        String fileName = path.toString();
+        int sep = fileName.lastIndexOf(".");
+
+        return fileName.substring(sep + 1);
     }
 }
