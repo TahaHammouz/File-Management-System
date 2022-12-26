@@ -15,7 +15,7 @@ public static Connection getConnection() throws SQLException {
 }
 ```
 
-Statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
+This Statement that loads the JDBC driver class for SQLite. The JDBC driver class provides a set of methods for connecting to a database. 
 ```java
 Class.forName("org.sqlite.JDBC");
 ```
@@ -62,17 +62,19 @@ try {
     }
 }```
 
-- ```java MessageDigest``` class is used to generate cryptographic hash values for data.
 
-- ```java digest``` method of the `MessageDigest` class in Java that is used to calculate the cryptographic hash value of data.
-
-- ```java Cipher``` class is used to perform encryption and decryption using various cryptographic algorithms.
-
-- ```java SecretKeySpec``` class is used to represent a secret key for a cryptographic algorithm. 
-
-- ```java doFinal``` method of the `Cipher` class that is used to perform the final step of an encryption or decryption operation.
-
-- ```java decode``` method of the `Base64` class that is used to decode a string that was encoded using the Base64 encoding scheme.
+```java 
+public static String encrypt(String fileName) throws Exception {
+    MessageDigest digest = MessageDigest.getInstance(KEY_DERIVATION_ALGORITHM);
+    byte[] key = digest.digest(PASSWORD.getBytes());
+    key = Arrays.copyOf(key, KEY_LENGTH);
+    Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+    SecretKeySpec keySpec = new SecretKeySpec(key, ALGORITHM);
+    cipher.init(1, keySpec);
+    byte[] encryptedFileName = cipher.doFinal(fileName.getBytes());
+    return Base64.getEncoder().encodeToString(encryptedFileName);
+}
+```
 
 ## Use Case Diagram
 <img width="2850" alt="Untitled (1)" src="https://user-images.githubusercontent.com/68341943/209454593-feefe646-c341-4297-84c4-202611d810cb.png">
